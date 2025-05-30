@@ -24,11 +24,11 @@ class RobotController:
         self.mocap_id = self.model.body_mocapid[self.marker_site_id]
         # 获取末端位置joint7(link7)(actuator7)的id
         self.end_position_id = self.model.body("link7").id
-        # 记录上次渲染时间
-        self.last_render_time = time.time()
         
     def run(self):
         """主仿真循环"""
+        # 记录上次渲染时间
+        last_render_time = time.time()
         try:
             # 设置仿真步长
             step_time = self.model.opt.timestep
@@ -47,10 +47,10 @@ class RobotController:
                 
                 # 同步渲染，保持实时性
                 now = time.time()
-                elapsed = now - self.last_render_time
+                elapsed = now - last_render_time
                 if elapsed > 1.0/60.0:  # 约60Hz渲染频率
                     self.viewer.sync()
-                    self.last_render_time = now
+                    last_render_time = now
                 
                 # 计算并补偿仿真时间与实际时间的差异
                 time_until_next_step = step_time - (time.time() - loop_start)
